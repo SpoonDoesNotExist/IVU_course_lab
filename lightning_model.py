@@ -13,7 +13,6 @@ class LitClassifier(pl.LightningModule):
         self.opt_conf = opt_conf
         self.loss_fn = nn.CrossEntropyLoss()
 
-        # Metrics
         self.precision = MulticlassPrecision(
             num_classes=num_classes, average='macro')
         self.recall = MulticlassRecall(
