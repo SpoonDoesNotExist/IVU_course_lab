@@ -20,11 +20,11 @@ DATA_ROOT = Path("./rice_images")
 RESULTS_DIR = Path("./results")
 
 optimizer_classes = [
-    # ('SGD', optim.SGD, {"momentum": 0.0}),
+    ('SGD', optim.SGD, {"momentum": 0.0}),
     ('SGD momentum ', optim.SGD, {"momentum": 0.9}),
-    # ('Adam', optim.Adam, dict()),
-    # ('AdamW', optim.AdamW, dict()),
-    # ('Adagrad', optim.Adagrad, dict())
+    ('Adam', optim.Adam, dict()),
+    ('AdamW', optim.AdamW, dict()),
+    ('Adagrad', optim.Adagrad, dict())
 ]
 
 
