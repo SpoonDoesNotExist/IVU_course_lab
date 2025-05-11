@@ -67,11 +67,11 @@ def train_model(
 
     result = {}
 
-    weight_norm = trainer.logged_metrics.get("train_weight_norm", None)
-    result["train_weight_norm"] = weight_norm.item() if weight_norm is not None else None
+    weight_norm = trainer.logged_metrics.get("train_weight_norm", 0)
+    result["train_weight_norm"] = weight_norm.item() if weight_norm != 0 else 0
 
-    mem_usage_MB = trainer.logged_metrics.get("mem_usage_MB", None)
-    result["mem_usage_MB"] = mem_usage_MB.item() if mem_usage_MB is not None else None
+    mem_usage_MB = trainer.logged_metrics.get("mem_usage_MB", 0)
+    result["mem_usage_MB"] = mem_usage_MB.item() if mem_usage_MB != 0 else 0
 
     val_mertics = trainer.validate(
         classifier,
@@ -115,10 +115,6 @@ def run_experiment():
         print(
             f"Test F1: {result['val_f1']:.4f}, Test Loss: {result['val_loss']:.4f}"
         )
-
-    print("\nResults:")
-    for name, (f1, loss) in results.items():
-        print(f"{name}: F1: {f1:.4f}, Loss: {loss:.4f}")
 
     with open(RESULTS_DIR / "results.json", "w") as f:
         json.dump(results, f, indent=4)
