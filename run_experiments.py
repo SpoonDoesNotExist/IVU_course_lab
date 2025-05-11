@@ -65,11 +65,21 @@ def train_model(
     )
     trainer.fit(classifier, train_loader, test_loader)
 
-    result = trainer.validate(
+    result = {}
+
+    weight_norm = trainer.logged_metrics.get("train_weight_norm", None)
+    result["train_weight_norm"] = weight_norm.item() if weight_norm is not None else None
+
+    mem_usage_MB = trainer.logged_metrics.get("mem_usage_MB", None)
+    result["mem_usage_MB"] = mem_usage_MB.item() if mem_usage_MB is not None else None
+
+    val_mertics = trainer.validate(
         classifier,
         dataloaders=test_loader,
         verbose=True
     )[0]
+    result.update(val_mertics)
+
     return result
 
 
@@ -80,17 +90,27 @@ def run_experiment():
     make_train_test_split(DATA_ROOT)
     train_loader, test_loader = get_dataloaders(
         DATA_ROOT,
-        IMG_SIZE,
-        BATCH_SIZE
+        BATCH_SIZE,
+        IMG_SIZE
     )
     results = {}
 
     for name, opt_cls, opt_conf in optimizer_classes:
         print(f"\nTraining with optimizer: {name}")
 
-        result = train_model(opt_cls, opt_conf, train_loader,
-                             test_loader, EPOCHS, RESULTS_DIR)
-        results[name] = (result['val_f1'], result['val_loss'])
+        result = train_model(
+            opt_cls, opt_conf,
+            train_loader, test_loader,
+            EPOCHS, RESULTS_DIR
+        )
+        results[name] = {
+            "val_f1": result["val_f1"],
+            "val_loss": result["val_loss"],
+            "val_acc": result["val_acc"],
+            "val_precision": result["val_precision"],
+            "val_recall": result["val_recall"],
+            "train_weight_norm": result["train_weight_norm"],
+        }
 
         print(
             f"Test F1: {result['val_f1']:.4f}, Test Loss: {result['val_loss']:.4f}"
