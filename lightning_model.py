@@ -12,8 +12,6 @@ class LitClassifier(pl.LightningModule):
         self.optimizer_class = optimizer_class
         self.opt_conf = opt_conf
         self.loss_fn = nn.CrossEntropyLoss()
-        self.weight_norms = []
-        self.grad_norms = []
 
         # Metrics
         self.precision = MulticlassPrecision(
